@@ -7,16 +7,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import useFetch from "@/hooks/user-fetch";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertTriangle, Download, Edit, Monitor, Save } from "lucide-react";
+import { AlertTriangle, Download, Edit, Loader2, Monitor, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import EntryForm from "./entry-form";
 import { Input } from "@/components/ui/input";
+import { enteriesToMarkdown } from "@/app/lib/helper";
+import { userAgent } from "next/server";
+import { init } from "next/dist/compiled/webpack/webpack";
+import MDEditor from "@uiw/react-md-editor";
+import { useUser } from "@clerk/nextjs";
 
 const ResumeBuilder = ({ initialContent }) => {
     const [activeTab, setActiveTab] = useState("edit");
     const [resumeMode, setResumeMode] = useState("preview");
     const [previewContent, setPreviewContent] = useState(initialContent);
+    const { user } = useUser();
+    const [isGenerating, setIsGenerating] = useState(false);
 
     const {
         control,
@@ -49,22 +56,85 @@ const ResumeBuilder = ({ initialContent }) => {
         if (initialContent) setActiveTab("preview");
     }, [initialContent]);
 
-    const getCombinedContent = () => {}
+    useEffect(() => {
+        if (activeTab === "edit") {
+            const newContent = getCombinedContent();
+            setPreviewContent(newContent ? newContent : initialContent);
+        }
+    })
+
+    const getContactMarkdown = () => {
+        const { contactInfo } = formValues;
+        const parts = [];
+        if (contactInfo.email) parts.push(`✉️ ${contactInfo.email}`);
+        if (contactInfo.mobile) parts.push(`📱 ${contactInfo.mobile}`);
+        if (contactInfo.linkedin)
+            parts.push(`💼 [LinkedIn](${contactInfo.linkedin})`)
+        if (contactInfo.twitter) parts.push(`🅇 ${contactInfo.twitter}`);
+
+        return parts.length > 0
+            ? `## <div align="center">${user.fullName}</div>
+            \n\n<div align="center">\n\n${parts.join(" | ")}\n\n</div>`
+            : "";
+    };
+
+    const getCombinedContent = () => {
+        const { summary, skills, experience, education, projects } = formValues;
+
+        return [ 
+            getContactMarkdown(),
+            summary && `##Professional Summary\n\n${summary}`,
+            skills && `## Skills\n\n${skills}`,
+            enteriesToMarkdown(experience, "Work Experience"),
+            enteriesToMarkdown(education, "Education"),
+            enteriesToMarkdown(projects, "Projects"),
+        ]
+        .filter(Boolean)
+        .join("\n\n;")
+    }
 
     const onSubmit = async (data) => {};
+
+    const GeneratePDF = async() => {
+        setIsGenerating(true);
+        try {
+            const element = document.getElementById("resume-pdf");
+            const opt = {
+                margin: [15,15],
+                filename: "resume.pdf",
+                image: { type: "jpeg", quality: 0.98 },
+                html2canvas: {scale: 2},
+                jsPDF: { unit: "mm", format: "a4", orientation: "potrait" },
+            };
+        } catch (error) {
+            console.error("PDF Generation Error:", error);  
+        } finally {
+            setIsGenerating(false); 
+        }
+    };
 
     return (
         <div className="space-y-4">
             <div className="flex flex-col md:flex-row justify-between items-center gap-2">
                 <h1 className="font-bold gradient-title text-5xl md:text-6xl">Resume Builder</h1>
+
                 <div className="space-x-2">
                     <Button variant="destructive">
                         <Save className="h-4 w-4" />
                         Save
                     </Button>
-                    <Button>
-                        <Download className="h-4 w-4" />
-                        Download PDF
+                    <Button onClick={GeneratePDF} disabled={isGenerating}>
+                        {isGenerating ? (
+                            <>
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                Generating PDF...
+                            </>
+                        ) : (
+                            <>
+                                <Download className="h-4 w-4" />
+                                Download PDF
+                            </>
+                        )}
                     </Button>
                 </div>
             </div>
@@ -258,6 +328,27 @@ const ResumeBuilder = ({ initialContent }) => {
                             </span>
                         </div>
                     )}
+
+                    <div className="border rounded-lg">
+                        <MDEditor 
+                            value={previewContent}
+                            onChange={setPreviewContent}
+                            height={800}
+                            preview={resumeMode}
+                        />
+                    </div>
+
+                    <div className="hidden">
+                        <div id="resume-pdf">
+                            <MDEditor.Markdown
+                                source={previewContent}
+                                style={{
+                                    background: "white",
+                                    color: "black"
+                                }}
+                            />
+                        </div>
+                    </div>
                 </TabsContent>
             </Tabs>
         </div>
