@@ -18,12 +18,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { saveResume } from "@/actions/resume";
+import { EntryForm } from "./entry-form";
+import useFetch from "@/hooks/use-fetch";
 import { useUser } from "@clerk/nextjs";
+import { entriesToMarkdown } from "@/app/lib/helper";
 import { resumeSchema } from "@/app/lib/schema";
 import html2pdf from "html2pdf.js/dist/html2pdf.min.js";
-import useFetch from "@/hooks/user-fetch";
-import EntryForm from "./entry-form";
-import { enteriesToMarkdown } from "@/app/lib/helper";
 
 export default function ResumeBuilder({ initialContent }) {
   const [activeTab, setActiveTab] = useState("edit");
@@ -102,9 +102,9 @@ export default function ResumeBuilder({ initialContent }) {
       getContactMarkdown(),
       summary && `## Professional Summary\n\n${summary}`,
       skills && `## Skills\n\n${skills}`,
-      enteriesToMarkdown(experience, "Work Experience"),
-      enteriesToMarkdown(education, "Education"),
-      enteriesToMarkdown(projects, "Projects"),
+      entriesToMarkdown(experience, "Work Experience"),
+      entriesToMarkdown(education, "Education"),
+      entriesToMarkdown(projects, "Projects"),
     ]
       .filter(Boolean)
       .join("\n\n");
@@ -140,7 +140,7 @@ export default function ResumeBuilder({ initialContent }) {
         .trim();
 
       console.log(previewContent, formattedContent);
-      await saveResumeFn(formattedContent);
+      await saveResumeFn(previewContent);
     } catch (error) {
       console.error("Save error:", error);
     }
