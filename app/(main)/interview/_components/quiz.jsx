@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import useFetch from "@/hooks/user-fetch";
+import useFetch from "@/hooks/use-fetch";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { BarLoader } from "react-spinners";

@@ -12,7 +12,7 @@ import { set } from "zod";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import useFetch from "@/hooks/user-fetch";
+import useFetch from "@/hooks/use-fetch";
 import { updateUser } from "@/actions/user";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";

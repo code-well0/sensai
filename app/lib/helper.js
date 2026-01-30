@@ -1,4 +1,4 @@
-export function enteriesToMarkdown(enteries, type) {
+export function entriesToMarkdown(enteries, type) {
     if (!enteries?.length) return "";
 
     return(
