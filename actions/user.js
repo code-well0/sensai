@@ -28,7 +28,14 @@ export async function updateUser(data) {
                   update: {},
                   create: {
                     industry: data.industry,
-                    ...(insights ?? {}),
+                    growthRates: 0,
+                    demandLevel: "MEDIUM",
+                    marketOutlook: "NEUTRAL",       
+                    salaryRanges: [],
+                    topSkills: [],
+                    keyTrends: [],
+                    recommendedSkills: [],                
+                    lastUpdated: new Date(),
                     nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
                   },
                 });
@@ -41,6 +48,7 @@ export async function updateUser(data) {
                     },
                     data: {
                         industry: data.industry,
+                        subIndustry: data.subIndustry,
                         experience: data.experience,
                         bio: data.bio,
                         skills: data.skills,
