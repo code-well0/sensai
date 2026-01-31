@@ -15,10 +15,14 @@ export async function updateUser(data) {
     });
 
     if (!user) throw new Error("User not found");
+    
+    let insights = null;
+    const existingInsight = await db.industryInsight.findUnique({
+        where: { industry: data.industry },
+    });
     try {
         const result = await db.$transaction(
             async (tx) => {
-
                 const industryInsight = await tx.industryInsight.upsert({
                   where: { industry: data.industry },
                   update: {},
