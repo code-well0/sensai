@@ -19,16 +19,25 @@ export async function updateUser(data) {
         const result = await db.$transaction(
             async (tx) => {
 
-                const industryInsight = await tx.industryInsight.upsert({
-                    where: { industry: data.industry },
-                    update: {},
-                    create: {
-                        industry: data.industry,
-                        ...(insights ?? {}),
-                        nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-                    },
-                });
+                // find if the industry exists
+                let industryInsight = await tx.industryInsight.findUnique({
+                    where: {
+                        industry: data.industry
+                    }
+                })
 
+                //if the industry does not exist, create it with deafult values - will replace it with ai later
+                if (!user.industryInsight){
+                        const insights = await generateAIInsights(data.industry);
+                
+                        industryInsight = await db.industryInsight.create({
+                            data: {
+                                industry: data.industry,
+                                ...insights,
+                                nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), //1 week from now
+                            },
+                        });
+                    }
 
                 // update the user
                 const updatedUser = await tx.user.update({
@@ -37,6 +46,7 @@ export async function updateUser(data) {
                     },
                     data: {
                         industry: data.industry,
+                        subIndustry: data.subIndustry,
                         experience: data.experience,
                         bio: data.bio,
                         skills: data.skills,
