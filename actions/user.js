@@ -20,15 +20,13 @@ export async function updateUser(data) {
             async (tx) => {
 
                 const industryInsight = await tx.industryInsight.upsert({
-                    where: { industry: data.industry },
-                    update: {},
-                    create: {
-                        industry: data.industry,
-                        ...(insights ?? {}),
-                        nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-                    },
+                  where: { industry: data.industry },
+                  update: {},
+                  create: {
+                    industry: data.industry,
+                    insights: await generateAIInsights(data.industry),
+                  },
                 });
-
 
                 // update the user
                 const updatedUser = await tx.user.update({
