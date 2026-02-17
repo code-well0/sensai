@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { generateAIInsights } from "./dashboard";
 
 export async function updateUser(data) {
@@ -68,32 +68,36 @@ export async function updateUser(data) {
 }
 
 export async function getUserOnboardingStatus() {
-    const { userId } = await auth();
-    if (!userId) throw new Error("Unauthorized");
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
 
-    // Try finding user
-    let user = await db.user.findUnique({
-        where: { clerkUserId: userId },
-        select: {
-            id: true,
-            industry: true,
-        }
+  let user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+    select: {
+      id: true,
+      industry: true,
+    },
+  });
+
+  // If user does not exist → create one
+  if (!user) {
+    const clerkUser = await currentUser();
+
+    if (!clerkUser) throw new Error("Clerk user not found");
+
+    user = await db.user.create({
+      data: {
+        clerkUserId: userId,
+        email: clerkUser.emailAddresses[0]?.emailAddress,
+      },
+      select: {
+        id: true,
+        industry: true,
+      },
     });
+  }
 
-    // If user does not exist → create one
-    if (!user) {
-        user = await db.user.create({
-            data: {
-                clerkUserId: userId,
-            },
-            select: {
-                id: true,
-                industry: true,
-            }
-        });
-    }
-
-    return {
-        isOnboarded: !!user.industry,
-    };
+  return {
+    isOnboarded: !!user.industry,
+  };
 }
