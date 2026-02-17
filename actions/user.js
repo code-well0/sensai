@@ -30,7 +30,7 @@ export async function updateUser(data) {
                 if (!user.industryInsight){
                         const insights = await generateAIInsights(data.industry);
                 
-                        industryInsight = await db.industryInsight.create({
+                        industryInsight = await tx.industryInsight.create({
                             data: {
                                 industry: data.industry,
                                 ...insights,
@@ -71,29 +71,29 @@ export async function getUserOnboardingStatus() {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
 
-    const user = await db.user.findUnique({
-        where: {
-            clerkUserId: userId,
-        },
+    // Try finding user
+    let user = await db.user.findUnique({
+        where: { clerkUserId: userId },
+        select: {
+            id: true,
+            industry: true,
+        }
     });
 
-    if (!user) throw new Error("User not found");
-
-    try {
-        const user = await db.user.findUnique({
-            where: {
+    // If user does not exist → create one
+    if (!user) {
+        user = await db.user.create({
+            data: {
                 clerkUserId: userId,
             },
             select: {
+                id: true,
                 industry: true,
             }
-        })
-
-        return {
-            isOnboarded: !!user?.industry,
-        };
-    } catch (error) {
-        console.log("Error checking onboarding status:", error.message);
-        throw new Error("Failed to check onboarding status");
+        });
     }
+
+    return {
+        isOnboarded: !!user.industry,
+    };
 }

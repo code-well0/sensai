@@ -1,7 +1,7 @@
 "use client";
 
 import { improveWithAI } from '@/actions/resume';
-import { entrySchema } from '@/app/lib/schema';
+import { entrySchema } from '@/app/1/schema';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
