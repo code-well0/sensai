@@ -6,6 +6,14 @@ SensAI is an intelligent career development platform powered by Google Gemini AI
 
 ## ✨ Key Features
 
+### 📊 Career Dashboard
+- Personalized industry insights
+- Salary range data by role and location
+- Market trends and growth rates
+- Demand level analysis
+- Recommended skills for career advancement
+- Performance analytics and progress tracking
+
 ### 🎤 Mock Interview Preparation
 - Industry-specific interview questions covering 50+ industries
 - 1000+ curated interview questions
@@ -28,14 +36,6 @@ SensAI is an intelligent career development platform powered by Google Gemini AI
 - Professional formatting and templates
 - Quick create and manage multiple cover letters
 
-### 📊 Career Dashboard
-- Personalized industry insights
-- Salary range data by role and location
-- Market trends and growth rates
-- Demand level analysis
-- Recommended skills for career advancement
-- Performance analytics and progress tracking
-
 ### 👤 User Profiling & Onboarding
 - Seamless Clerk authentication
 - Industry-specific profile setup
@@ -46,46 +46,26 @@ SensAI is an intelligent career development platform powered by Google Gemini AI
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **Next.js 16** - React framework for production
-- **React 19** - UI library
+- **Next.js 16 & React 19** - Modern React framework and UI library
 - **TailwindCSS 4** - Utility-first CSS framework
-- **Shadcn/UI** - High-quality React components
-  - Accordion, Alert Dialog, Dialog, Dropdown Menu, Label, Progress, Radio Group, Select, Tabs
-- **Lucide React** - Beautiful icon library
-- **Recharts** - Composable charting library for analytics
-- **React Hook Form** - Efficient form state management
-- **Zod** - TypeScript-first schema validation
+- **Shadcn/UI** - Prebuilt accessible React components
+- **Lucide React** - Icon library
+- **Recharts** - Charting library for analytics
+- **React Hook Form + Zod** - Form state management and validation
 
 ### Backend & Database
-- **Next.js API Routes** - Serverless backend
-- **Prisma ORM** - Database toolkit and ORM
+- **Next.js API Routes** - Serverless backend functions
+- **Prisma ORM** - Database ORM and toolkit
 - **PostgreSQL** - Relational database
-- **Neon** - Serverless PostgreSQL platform
-- **Prisma Adapter for Neon** - Optimized Neon integration
+- **Neon** - Serverless PostgreSQL hosting
+- **Prisma Neon Adapter** - Optimized Neon integration
 
 ### AI & External Services
 - **Google Generative AI** - Gemini API for AI-powered features
 - **Clerk** - Authentication and user management
 - **Inngest** - Background job processing
-
-### UI & UX Enhancements
-- **Next Themes** - Dark/light mode support
-- **Sonner** - Toast notifications
-- **React Spinners** - Loading indicators
-- **UIW MD Editor** - Markdown editor component
-- **html2pdf.js** - PDF generation for resumes/cover letters
-
-### Development Tools
-- **ESLint** - Code linting
-- **PostCSS** - CSS processing
-- **Babel React Compiler** - React compilation optimization
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js 18+
-- npm or yarn
-- PostgreSQL database (or Neon serverless)
+- 
+## Getting Started
 
 ### Installation
 
@@ -175,19 +155,6 @@ SensAI uses **Clerk** for secure authentication and user management. Features in
 - User profile management
 - Session management
 
-## 🎯 Pages & Features
-
-| Page | Purpose |
-|------|---------|
-| `/` | Landing page with features and CTA |
-| `/dashboard` | User dashboard with industry insights |
-| `/interview` | Interview prep with mock quizzes |
-| `/interview/mock` | Interactive mock interview |
-| `/resume` | Resume builder and optimizer |
-| `/ai-cover-letter` | Cover letter management |
-| `/ai-cover-letter/new` | Create new cover letter |
-| `/onboarding` | User profile setup |
-
 ## 🚀 Deployment
 
 Deploy easily on Vercel:
@@ -202,43 +169,3 @@ Or use Vercel directly:
 - Connect repository to Vercel
 - Set environment variables
 - Deploy!
-
-[Deploy on Vercel](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme)
-
-## 📖 Learn More
-
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Prisma Documentation](https://www.prisma.io/docs/)
-- [Clerk Documentation](https://clerk.com/docs)
-- [Google Generative AI](https://ai.google.dev/)
-- [TailwindCSS Documentation](https://tailwindcss.com/docs)
-
-## 📝 Scripts
-
-```bash
-npm run dev       # Start development server
-npm run build     # Build for production
-npm run start     # Start production server
-npm run lint      # Run ESLint
-```
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
-## 🌟 Future Roadmap
-
-- [ ] Video interview practice with recording
-- [ ] Real-time AI coaching and feedback
-- [ ] LinkedIn profile optimization
-- [ ] Job matching and recommendations
-- [ ] Salary negotiation guides
-- [ ] Community discussions and peer learning
-
---- 
-
-Built with ❤️ using Next.js and Powered by Google Gemini AI
