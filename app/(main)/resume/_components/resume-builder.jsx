@@ -40,7 +40,12 @@ export default function ResumeBuilder({ initialContent }) {
   } = useForm({
     resolver: zodResolver(resumeSchema),
     defaultValues: {
-      contactInfo: {},
+      contactInfo: {
+        email: user?.primaryEmailAddress?.emailAddress || "",
+        mobile: "",
+        linkedin: "",
+        twitter: "",
+      },
       summary: "",
       skills: "",
       experience: [],
@@ -170,7 +175,10 @@ export default function ResumeBuilder({ initialContent }) {
         <div className="space-x-2">
           <Button
             variant="destructive"
-            onClick={handleSubmit(onSubmit)}
+            onClick={handleSubmit(onSubmit, (errors) => {
+              toast.error("Please fill in all required fields.");
+              console.error("Validation Errors:", errors);
+            })}
             disabled={isSaving}
           >
             {isSaving ? (
