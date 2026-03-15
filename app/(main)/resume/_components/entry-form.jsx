@@ -1,7 +1,7 @@
 "use client";
 
 import { improveWithAI } from '@/actions/resume';
-import { entrySchema } from '@/app/lib/schema';
+import { experienceSchema, educationSchema, projectSchema } from '@/app/lib/schema';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -22,7 +22,7 @@ const formatDiaplayDate = (dateString) => {
     return format(date, "MMM yyyy");
 };
 
-const EntryForm = ({ type, entries, onChange}) => {
+const EntryForm = ({ type, entries, onChange }) => {
     const [isAdding, setIsAdding] = useState(false);
 
     const schemaMap = {
@@ -41,30 +41,30 @@ const EntryForm = ({ type, entries, onChange}) => {
     } = useForm({
         resolver: zodResolver(schemaMap[type]),
         defaultValues:
-        type === "Experience"
-        ? {
-            title: "",
-            organization: "",
-            startDate: "",
-            endDate: "",
-            description: "",
-            current: false,
-        }
-        : type === "Education"
-        ? {
-            degree: "",
-            institution: "",
-            startDate: "",
-            endDate: "",
-            cgpa: "",
-            description: "",
-        }
-        : {
-            name: "",
-            techStack: "",
-            link: "",
-            description: "",
-        },
+            type === "Experience"
+                ? {
+                    title: "",
+                    organization: "",
+                    startDate: "",
+                    endDate: "",
+                    description: "",
+                    current: false,
+                }
+                : type === "Education"
+                    ? {
+                        degree: "",
+                        institution: "",
+                        startDate: "",
+                        endDate: "",
+                        cgpa: "",
+                        description: "",
+                    }
+                    : {
+                        name: "",
+                        techStack: "",
+                        link: "",
+                        description: "",
+                    },
     });
 
     const current = watch("current");
@@ -105,8 +105,8 @@ const EntryForm = ({ type, entries, onChange}) => {
     }, [improvedContent, improveError, isImproving]);
 
     const handleImproveDescription = async () => {
-        const description = watch ("description");
-        if(!description){
+        const description = watch("description");
+        if (!description) {
             toast.error("Please enter a description first");
             return;
         }
@@ -131,11 +131,11 @@ const EntryForm = ({ type, entries, onChange}) => {
                                 </CardTitle>
                                 <Button
                                     variant="outline"
-                                    size="icon" 
+                                    size="icon"
                                     type="button"
                                     onClick={() => handleDelete(index)}
                                 >
-                                    <X className="h-4 w-4"/>
+                                    <X className="h-4 w-4" />
                                 </Button>
                             </CardHeader>
                             <CardContent>
@@ -172,7 +172,7 @@ const EntryForm = ({ type, entries, onChange}) => {
                             </div>
 
                             <div className="space-y-2">
-                                <Input 
+                                <Input
                                     placeholder="Orginization/Company"
                                     {...register("organization")}
                                     error={errors.organization}
@@ -252,7 +252,7 @@ const EntryForm = ({ type, entries, onChange}) => {
                                     <Sparkle className="h-4 w-4 mr-2" />
                                     Improve with AI
                                 </>
-                            )}       
+                            )}
                         </Button>
                     </CardContent>
                     <CardFooter className="flex justify-end space-x-2">
