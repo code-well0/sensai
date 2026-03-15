@@ -27,10 +27,10 @@ export async function updateUser(data) {
                 })
 
                 //if the industry does not exist, create it with deafult values - will replace it with ai later
-                if (!user.industryInsight){
+                if (!industryInsight) {
                         const insights = await generateAIInsights(data.industry);
                 
-                        industryInsight = await db.industryInsight.create({
+                        industryInsight = await tx.industryInsight.create({
                             data: {
                                 industry: data.industry,
                                 ...insights,

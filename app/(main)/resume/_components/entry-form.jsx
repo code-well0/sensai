@@ -25,6 +25,12 @@ const formatDiaplayDate = (dateString) => {
 const EntryForm = ({ type, entries, onChange}) => {
     const [isAdding, setIsAdding] = useState(false);
 
+    const schemaMap = {
+        Experience: experienceSchema,
+        Education: educationSchema,
+        Project: projectSchema,
+    };
+
     const {
         register,
         handleSubmit: handleValidation,
@@ -33,14 +39,31 @@ const EntryForm = ({ type, entries, onChange}) => {
         watch,
         setValue
     } = useForm({
-        resolver: zodResolver(entrySchema),
-        defaultValues: {
+        resolver: zodResolver(schemaMap[type]),
+        defaultValues:
+        type === "Experience"
+        ? {
             title: "",
-            Organization: "",
+            organization: "",
             startDate: "",
             endDate: "",
             description: "",
             current: false,
+        }
+        : type === "Education"
+        ? {
+            degree: "",
+            institution: "",
+            startDate: "",
+            endDate: "",
+            cgpa: "",
+            description: "",
+        }
+        : {
+            name: "",
+            techStack: "",
+            link: "",
+            description: "",
         },
     });
 
@@ -102,7 +125,9 @@ const EntryForm = ({ type, entries, onChange}) => {
                         <Card key={index}>
                             <CardHeader className="flex flex-row items-cemter justify-between space-y-0 pb-2">
                                 <CardTitle className="text-sm font-medium">
-                                    {item.title} @ {item.organization}
+                                    {type === "Experience" && `${item.title} @ ${item.organization}`}
+                                    {type === "Education" && `${item.degree} - ${item.institution}`}
+                                    {type === "Project" && `${item.name}`}
                                 </CardTitle>
                                 <Button
                                     variant="outline"

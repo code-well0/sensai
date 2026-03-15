@@ -34,33 +34,46 @@ export const contactSchema = z.object({
     twitter: z.string().optional(),
 });
 
-export const entrySchema = z.object({
-    title: z.string().min(1, "Title is required"),
-    organization: z.string().min(1, "Organization is required"),
-    startDate: z.string().min(1, "Start date is required"),
-    endDate: z.string().optional(),
-    description: z.string().min(1, "Description is required"),
-    current: z.boolean().default(false), 
-})
-.refine(
-    (data) => {
-        if(!data.current && !data.endDate) {
-            return false;
-        }
-        return true;
-    },
-    {
-        message: "End date is required unless this is your current position",
-        path: ["endDate"],
-    }
+// ================= EXPERIENCE =================
+export const experienceSchema = z.object({
+  title: z.string().min(1, "Job title is required"),
+  organization: z.string().min(1, "Company is required"),
+  startDate: z.string().min(1, "Start date is required"),
+  endDate: z.string().optional(),
+  description: z.string().min(1, "Description is required"),
+  current: z.boolean().default(false),
+}).refine(
+  (data) => data.current || !!data.endDate,
+  {
+    message: "End date is required unless this is your current role",
+    path: ["endDate"],
+  }
 );
+
+// ================= EDUCATION =================
+export const educationSchema = z.object({
+  degree: z.string().min(1, "Degree is required"),
+  institution: z.string().min(1, "Institution is required"),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+  cgpa: z.string().optional(),
+  description: z.string().optional(),
+});
+
+// ================= PROJECT =================
+export const projectSchema = z.object({
+  name: z.string().min(1, "Project name is required"),
+  techStack: z.string().optional(),
+  link: z.string().optional(),
+  description: z.string().min(1, "Description is required"),
+});
 
 export const resumeSchema = z.object({
     contactInfo: contactSchema,
     skills: z.string().min(1, "Skills are required"),
-    experience: z.array(entrySchema),
-    education: z.array(entrySchema),
-    projects: z.array(entrySchema),
+    experience: z.array(experienceSchema),
+    education: z.array(educationSchema),
+    projects: z.array(projectSchema),
 });
 
 export const coverLetterSchema = z.object({
