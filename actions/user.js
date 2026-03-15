@@ -5,66 +5,66 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { generateAIInsights } from "./dashboard";
 
 export async function updateUser(data) {
-    const { userId } = await auth();
-    if (!userId) throw new Error("Unauthorized");
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
 
-    const user = await db.user.findUnique({
-        where: {
-            clerkUserId: userId,
-        },
-    });
+  const user = await db.user.findUnique({
+    where: {
+      clerkUserId: userId,
+    },
+  });
 
-    if (!user) throw new Error("User not found");
-    try {
-        const result = await db.$transaction(
-            async (tx) => {
+  if (!user) throw new Error("User not found");
+  try {
+    const result = await db.$transaction(
+      async (tx) => {
 
-                // find if the industry exists
-                let industryInsight = await tx.industryInsight.findUnique({
-                    where: {
-                        industry: data.industry
-                    }
-                })
+        // find if the industry exists
+        let industryInsight = await tx.industryInsight.findUnique({
+          where: {
+            industry: data.industry
+          }
+        })
 
-                //if the industry does not exist, create it with deafult values - will replace it with ai later
-                if (!industryInsight) {
-                        const insights = await generateAIInsights(data.industry);
-                
-                        industryInsight = await tx.industryInsight.create({
-                            data: {
-                                industry: data.industry,
-                                ...insights,
-                                nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), //1 week from now
-                            },
-                        });
-                    }
+        //if the industry does not exist, create it with deafult values - will replace it with ai later
+        if (!industryInsight) {
+          const insights = await generateAIInsights(data.industry);
 
-                // update the user
-                const updatedUser = await tx.user.update({
-                    where: {
-                        id: user.id,
-                    },
-                    data: {
-                        industry: data.industry,
-                        experience: data.experience,
-                        bio: data.bio,
-                        skills: data.skills,
-                    },
-                });
-
-                return { updatedUser, industryInsight};
+          industryInsight = await tx.industryInsight.create({
+            data: {
+              industry: data.industry,
+              ...insights,
+              nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), //1 week from now
             },
-            {
-                timeout: 20000, // default: 5000
-            }
-        );
+          });
+        }
 
-        return { success: true, ...result };
-        
-    } catch (error) {
-        console.error("Error updating user and industry:", error.message);
-        throw new Error("Failed to update profile: " + error.message);
-    }
+        // update the user
+        const updatedUser = await tx.user.update({
+          where: {
+            id: user.id,
+          },
+          data: {
+            industry: data.industry,
+            experience: data.experience,
+            bio: data.bio,
+            skills: data.skills,
+          },
+        });
+
+        return { updatedUser, industryInsight };
+      },
+      {
+        timeout: 20000, // default: 5000
+      }
+    );
+
+    return { success: true, ...result };
+
+  } catch (error) {
+    console.error("Error updating user and industry:", error.message);
+    throw new Error("Failed to update profile: " + error.message);
+  }
 }
 
 export async function getUserOnboardingStatus() {
@@ -85,16 +85,32 @@ export async function getUserOnboardingStatus() {
 
     if (!clerkUser) throw new Error("Clerk user not found");
 
-    user = await db.user.create({
-      data: {
-        clerkUserId: userId,
-        email: clerkUser.emailAddresses[0]?.emailAddress,
-      },
-      select: {
-        id: true,
-        industry: true,
-      },
-    });
+    try {
+      user = await db.user.create({
+        data: {
+          clerkUserId: userId,
+          name: `${clerkUser.firstName || ""} ${clerkUser.lastName || ""}`.trim(),
+          imageUrl: clerkUser.imageUrl,
+          email: clerkUser.emailAddresses[0]?.emailAddress,
+        },
+        select: {
+          id: true,
+          industry: true,
+        },
+      });
+    } catch (error) {
+      if (error.code === "P2002") {
+        user = await db.user.findUnique({
+          where: { clerkUserId: userId },
+          select: {
+            id: true,
+            industry: true,
+          },
+        });
+      } else {
+        throw error;
+      }
+    }
   }
 
   return {
