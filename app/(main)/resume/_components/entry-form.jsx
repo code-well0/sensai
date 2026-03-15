@@ -159,69 +159,143 @@ const EntryForm = ({ type, entries, onChange }) => {
                         <CardTitle>Add {type}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Input
-                                    placeholder="Title/Position"
-                                    {...register("title")}
-                                    error={errors.title}
-                                />
-                                {errors.title && (
-                                    <p className="text-sm text-red-500">{errors.title.message}</p>
-                                )}
-                            </div>
+                        {type === "Experience" && (
+                            <>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Input
+                                            placeholder="Title/Position"
+                                            {...register("title")}
+                                            error={errors.title}
+                                        />
+                                        {errors.title && <p className="text-sm text-red-500">{errors.title.message}</p>}
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Input
+                                            placeholder="Organization/Company"
+                                            {...register("organization")}
+                                            error={errors.organization}
+                                        />
+                                        {errors.organization && <p className="text-sm text-red-500">{errors.organization.message}</p>}
+                                    </div>
+                                </div>
 
-                            <div className="space-y-2">
-                                <Input
-                                    placeholder="Orginization/Company"
-                                    {...register("organization")}
-                                    error={errors.organization}
-                                />
-                                {errors.organization && (
-                                    <p className="text-sm text-red-500">{errors.organization.message}</p>
-                                )}
-                            </div>
-                        </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Input
+                                            type="month"
+                                            {...register("startDate")}
+                                            error={errors.startDate}
+                                        />
+                                        {errors.startDate && <p className="text-sm text-red-500">{errors.startDate.message}</p>}
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Input
+                                            type="month"
+                                            {...register("endDate")}
+                                            disabled={current}
+                                            error={errors.endDate}
+                                        />
+                                        {errors.endDate && <p className="text-sm text-red-500">{errors.endDate.message}</p>}
+                                    </div>
+                                </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Input
-                                    placeholder="month"
-                                    {...register("startDate")}
-                                    error={errors.startDate}
-                                />
-                                {errors.startDate && (
-                                    <p className="text-sm text-red-500">{errors.startDate.message}</p>
-                                )}
-                            </div>
+                                <div>
+                                    <Input
+                                        type="checkbox"
+                                        id="current"
+                                        {...register("current")}
+                                        onChange={(e) => {
+                                            setValue("current", e.target.checked);
+                                            if (e.target.checked) {
+                                                setValue("endDate", "");
+                                            }
+                                        }}
+                                    />
+                                    <label htmlFor="current">Current {type}</label>
+                                </div>
+                            </>
+                        )}
 
-                            <div className="space-y-2">
-                                <Input
-                                    placeholder="month"
-                                    {...register("endDate")}
-                                    disabled={current}
-                                    error={errors.endDate}
-                                />
-                                {errors.endDate && (
-                                    <p className="text-sm text-red-500">{errors.endDate.message}</p>
-                                )}
-                            </div>
-                        </div>
+                        {type === "Education" && (
+                            <>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Input
+                                            placeholder="Degree"
+                                            {...register("degree")}
+                                            error={errors.degree}
+                                        />
+                                        {errors.degree && <p className="text-sm text-red-500">{errors.degree.message}</p>}
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Input
+                                            placeholder="Institution"
+                                            {...register("institution")}
+                                            error={errors.institution}
+                                        />
+                                        {errors.institution && <p className="text-sm text-red-500">{errors.institution.message}</p>}
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Input
+                                            type="month"
+                                            {...register("startDate")}
+                                            error={errors.startDate}
+                                        />
+                                        {errors.startDate && <p className="text-sm text-red-500">{errors.startDate.message}</p>}
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Input
+                                            type="month"
+                                            {...register("endDate")}
+                                            error={errors.endDate}
+                                        />
+                                        {errors.endDate && <p className="text-sm text-red-500">{errors.endDate.message}</p>}
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <Input
+                                        placeholder="CGPA"
+                                        {...register("cgpa")}
+                                        error={errors.cgpa}
+                                    />
+                                    {errors.cgpa && <p className="text-sm text-red-500">{errors.cgpa.message}</p>}
+                                </div>
+                            </>
+                        )}
 
-                        <div>
-                            <Input
-                                type="checkbox"
-                                id="current"
-                                {...register("current")}
-                                onChange={(e) => {
-                                    setValue("current", e.target.checked);
-                                    if (e.target.checked) {
-                                        setValue("endDate", "")
-                                    }
-                                }}
-                            />
-                            <label htmlFor="current">Current {type}</label>
-                        </div>
+                        {type === "Project" && (
+                            <>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Input
+                                            placeholder="Project Name"
+                                            {...register("name")}
+                                            error={errors.name}
+                                        />
+                                        {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Input
+                                            placeholder="Tech Stack"
+                                            {...register("techStack")}
+                                            error={errors.techStack}
+                                        />
+                                        {errors.techStack && <p className="text-sm text-red-500">{errors.techStack.message}</p>}
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <Input
+                                        placeholder="Link"
+                                        {...register("link")}
+                                        error={errors.link}
+                                    />
+                                    {errors.link && <p className="text-sm text-red-500">{errors.link.message}</p>}
+                                </div>
+                            </>
+                        )}
 
                         <div className="space-y-2">
                             <Textarea
