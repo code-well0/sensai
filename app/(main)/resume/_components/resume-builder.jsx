@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod"; 
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   AlertTriangle,
   Download,
@@ -120,7 +120,19 @@ export default function ResumeBuilder({ initialContent }) {
         margin: [15, 15],
         filename: "resume.pdf",
         image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2 },
+        html2canvas: {
+          scale: 2,
+          onclone: (document) => {
+            const styleElements = Array.from(document.querySelectorAll("style"));
+            styleElements.forEach((s) => {
+              if (s.innerHTML.includes("lab(") || s.innerHTML.includes("oklch(")) {
+                s.innerHTML = s.innerHTML
+                  .replace(/lab\(.*?\)/g, "rgb(0, 0, 0)")
+                  .replace(/oklch\(.*?\)/g, "rgb(0, 0, 0)");
+              }
+            });
+          }
+        },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
       };
 

@@ -20,7 +20,7 @@ export async function saveResume(content) {
 
     try {
         const resume = await db.resume.upsert({
-            where:{
+            where: {
                 userId: user.id,
             },
             update: {
@@ -29,6 +29,7 @@ export async function saveResume(content) {
             create: {
                 userId: user.id,
                 content,
+                feedback: "",
             },
         });
 
