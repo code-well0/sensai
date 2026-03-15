@@ -116,30 +116,33 @@ export default function ResumeBuilder({ initialContent }) {
     setIsGenerating(true);
     try {
       const element = document.getElementById("resume-pdf");
-      const opt = {
-        margin: [15, 15],
-        filename: "resume.pdf",
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: {
-          scale: 2,
-          onclone: (document) => {
-            const styleElements = Array.from(document.querySelectorAll("style"));
-            styleElements.forEach((s) => {
-              if (s.innerHTML.includes("lab(") || s.innerHTML.includes("oklch(")) {
-                s.innerHTML = s.innerHTML
-                  .replace(/lab\(.*?\)/g, "rgb(0, 0, 0)")
-                  .replace(/oklch\(.*?\)/g, "rgb(0, 0, 0)");
-              }
-            });
-          }
-        },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-      };
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
 
-      await html2pdf().set(opt).from(element).save();
+      const doc = iframe.contentWindow.document;
+      doc.write('<html><head><title>Resume</title>');
+
+      // Copy all style/link tags to preserve Markdown styles
+      const styles = document.querySelectorAll('style, link[rel="stylesheet"]');
+      styles.forEach(style => {
+        doc.write(style.outerHTML);
+      });
+
+      doc.write('<style>body { margin: 0; padding: 20px; background: white; color: black; }</style>');
+      doc.write('</head><body data-color-mode="light">');
+      doc.write(element.innerHTML);
+      doc.write('</body></html>');
+      doc.close();
+
+      iframe.contentWindow.focus();
+      setTimeout(() => {
+        iframe.contentWindow.print();
+        document.body.removeChild(iframe);
+        setIsGenerating(false);
+      }, 500);
     } catch (error) {
       console.error("PDF generation error:", error);
-    } finally {
       setIsGenerating(false);
     }
   };
